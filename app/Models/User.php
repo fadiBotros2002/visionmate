@@ -6,21 +6,26 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
      */
+    protected $primaryKey = 'user_id';
     protected $fillable = [
-        'name',
-        'email',
+        'username',
+        'phone',
         'password',
+        'role',
+        'location',
+        'identity_image',
     ];
 
     /**
@@ -44,5 +49,35 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function requests()
+    {
+        return $this->hasMany(Request::class, 'blind_id', 'user_id');
+    }
+
+    public function assignedRequests()
+    {
+        return $this->hasMany(Request::class, 'volunteer_id', 'user_id');
+    }
+
+    public function ratingsGiven()
+    {
+        return $this->hasMany(Rating::class, 'blind_id', 'user_id');
+    }
+
+    public function ratingsReceived()
+    {
+        return $this->hasMany(Rating::class, 'volunteer_id', 'user_id');
+    }
+
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class, 'volunteer_id', 'user_id');
+    }
+
+    public function certificates()
+    {
+        return $this->hasMany(Certificate::class, 'volunteer_id', 'user_id');
     }
 }
