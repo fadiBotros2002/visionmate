@@ -16,7 +16,7 @@ return new class extends Migration
                 $table->unsignedBigInteger('blind_id');
                 $table->unsignedBigInteger('volunteer_id');
                 $table->unsignedBigInteger('request_id');
-                $table->integer('rating')->checkBetween([1, 5]);
+                $table->integer('rating')->checkBetween([0, 5]);
                 //$table->text('feedback')->nullable();
                 $table->timestamps();
 

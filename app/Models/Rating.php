@@ -24,6 +24,6 @@ class Rating extends Model
 
     public function requests()
     {
-        return $this->belongsTo(Request::class, 'request_id', 'request_id');
+        return $this->belongsTo(BlindRequest::class, 'request_id', 'request_id');
     }
 }

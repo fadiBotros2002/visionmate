@@ -15,15 +15,17 @@ return new class extends Migration
             $table->bigIncrements('request_id');
             $table->unsignedBigInteger('blind_id');
             $table->unsignedBigInteger('volunteer_id')->nullable();
-            $table->timestamp('request_time')->useCurrent(); // date of request
+            $table->timestamp('request_time')->useCurrent();
             $table->enum('status', ['pending', 'accepted'])->default('pending');
             $table->text('blind_location')->nullable();
-            $table->timestamp('accepted_at')->nullable(); // date of response
+            $table->timestamp('accepted_at')->nullable();
+            $table->boolean('is_rated')->default(false);
             $table->timestamps();
 
             $table->foreign('blind_id')->references('user_id')->on('users')->onDelete('cascade');
             $table->foreign('volunteer_id')->references('user_id')->on('users')->onDelete('set null');
         });
+
 
     }
 

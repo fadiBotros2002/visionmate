@@ -10,7 +10,7 @@ class Certificate extends Model
     use HasFactory;
 
     protected $primaryKey = 'certificate_id';
-    protected $fillable = ['volunteer_id', 'certificate_type', 'awarded_at'];
+    protected $fillable = ['volunteer_id', 'certificate_type','certificate_file', 'awarded_at'];
 
 
     public function users()

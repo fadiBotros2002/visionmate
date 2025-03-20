@@ -15,6 +15,7 @@ return new class extends Migration
             $table->bigIncrements('certificate_id');
             $table->unsignedBigInteger('volunteer_id');
             $table->enum('certificate_type', ['helper', 'supporter', 'champion', 'legend']);
+            $table->string('certificate_file')->nullable();
             $table->timestamp('awarded_at')->default(now()); //Release date of the certificate
             $table->timestamps();
 

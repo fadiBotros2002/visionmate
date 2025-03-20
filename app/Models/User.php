@@ -53,12 +53,12 @@ class User extends Authenticatable
 
     public function requests()
     {
-        return $this->hasMany(Request::class, 'blind_id', 'user_id');
+        return $this->hasMany(BlindRequest::class, 'blind_id', 'user_id');
     }
 
     public function assignedRequests()
     {
-        return $this->hasMany(Request::class, 'volunteer_id', 'user_id');
+        return $this->hasMany(BlindRequest::class, 'volunteer_id', 'user_id');
     }
 
     public function ratingsGiven()
