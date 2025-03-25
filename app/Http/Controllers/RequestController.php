@@ -22,14 +22,14 @@ class RequestController extends Controller
             'longitude' => 'required|numeric|between:-180,180',
         ]);
 
-        // تحويل الإحداثيات إلى عنوان نصي باستخدام Nominatim
+        // تحويل الإحداثيات إلى عنوان نصي
         $locationString = $this->reverseGeocode($request->latitude, $request->longitude);
 
         $blindRequest = BlindRequest::create([
             'blind_id' => $blind->user_id,
             'blind_latitude' => $request->latitude,
             'blind_longitude' => $request->longitude,
-            'blind_location' => $locationString, // تخزين النص
+            'blind_location' => $locationString,
             'status' => 'pending'
         ]);
 
@@ -45,9 +45,11 @@ class RequestController extends Controller
             if ($distance <= 5) {
                 $matchingVolunteers[] = $volunteer;
 
+                // إضافة request_id عند إنشاء الإشعار
                 Notification::create([
                     'volunteer_id' => $volunteer->user_id,
-                    'message' => 'There is a request nearby from a blind person. Can you help?'
+                    'request_id'   => $blindRequest->request_id,
+                    'message'      => 'There is a request nearby from a blind person. Can you help?'
                 ]);
             }
         }
@@ -59,25 +61,27 @@ class RequestController extends Controller
         ]);
     }
 
-    // دالة تحويل الإحداثيات إلى نص باستخدام Nominatim (مجاني)
+    /**
+     * Reverse geocode using Nominatim.
+     */
     private function reverseGeocode($lat, $lon)
     {
         $url = "https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=$lat&lon=$lon";
-
         $opts = [
             "http" => [
                 "header" => "User-Agent: MyApp/1.0\r\n"
             ]
         ];
         $context = stream_context_create($opts);
-
         $response = file_get_contents($url, false, $context);
         $data = json_decode($response);
 
-        return $data->display_name ?? "Unknown location";  // إرجاع الموقع النصي
+        return $data->display_name ?? "Unknown location";
     }
 
-    // دالة حساب المسافة
+    /**
+     * Haversine formula for distance calculation.
+     */
     private function haversine($lat1, $lon1, $lat2, $lon2)
     {
         $earthRadius = 6371; // km
@@ -89,38 +93,34 @@ class RequestController extends Controller
             sin($dLon / 2) * sin($dLon / 2);
 
         $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
-        return $earthRadius * $c; // المسافة بالكيلومترات
+        return $earthRadius * $c;
     }
 
-
-
+    /**
+     * Volunteer accepts a request.
+     */
     public function acceptRequest($id)
     {
         $volunteer = Auth::user();
 
-        // Retrieve the pending request
         $blindRequest = BlindRequest::where('request_id', $id)
-            ->where('status', 'pending')  // Check if the status is still 'pending'
+            ->where('status', 'pending')
             ->first();
 
-        // If no request is found or if the request is already accepted, return an error message
         if (!$blindRequest) {
             return response()->json([
                 'message' => 'Request not found or has already been accepted.',
-            ], 404);  // 404 if request is not found or already accepted
+            ], 404);
         }
 
-        // Update the request with the volunteer details
         $blindRequest->update([
             'volunteer_id' => $volunteer->user_id,
             'status' => 'accepted',
             'accepted_at' => now(),
         ]);
 
-        // Get the blind person associated with the request
         $blind = $blindRequest->blinds;
 
-        // Return the response with blind's phone and location
         return response()->json([
             'message' => 'Request accepted.',
             'blind_phone' => $blind->phone,
@@ -128,23 +128,20 @@ class RequestController extends Controller
         ]);
     }
 
-
     /**
-     * Get notifications for the volunteer.
+     * Get unread notifications for the volunteer.
      */
     public function notifications()
     {
-        $volunteer = Auth::user();  // Get the authenticated volunteer
+        $volunteer = Auth::user();
 
-        // Fetch only unread notifications
         $notifications = $volunteer->notifications()
-            ->where('is_read', 0)  // Add filter to get only unread notifications
-            ->orderBy('created_at', 'desc')  // Sort by creation date (newest first)
-            ->get();  // Execute the query and get the results
+            ->where('is_read', 0)
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-        return response()->json($notifications);  // Return the notifications as JSON
+        return response()->json($notifications);
     }
-
 
     /**
      * Mark notification as read.
@@ -162,5 +159,24 @@ class RequestController extends Controller
         return response()->json([
             'message' => 'Notification marked as read.'
         ]);
+    }
+
+    /**
+     * Get all pending requests related to volunteer notifications.
+     */
+    public function getPendingRequestsForVolunteer()
+    {
+        $volunteer = Auth::user();
+
+        $pendingRequestIds = Notification::where('volunteer_id', $volunteer->user_id)
+            ->where('is_read', false)
+            ->pluck('request_id')
+            ->unique();
+
+        $pendingRequests = BlindRequest::whereIn('request_id', $pendingRequestIds)
+            ->where('status', 'pending')
+            ->get();
+
+        return response()->json($pendingRequests);
     }
 }

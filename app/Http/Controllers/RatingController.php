@@ -17,31 +17,35 @@ class RatingController extends Controller
     // Function to allow a blind user to rate a volunteer
     public function rateVolunteer(Request $request)
     {
-        // Validate the incoming rating request
+        // تحقق من صحة التقييم
         $request->validate([
             'rating' => 'required|integer|min:0|max:5'
         ]);
 
-        // Get the authenticated blind user
+        // الحصول على المستخدم (الأعمى) الحالي
         $blind = Auth::user();
 
-        // Get the latest request that was accepted and completed by a volunteer
+        // البحث عن أحدث طلب (غير تم تقييمه بعد)
         $lastRequest = BlindRequest::where('blind_id', $blind->user_id)
             ->whereNotNull('volunteer_id')
+            ->where('is_rated', false) // نبحث فقط عن الطلبات التي لم يتم تقييمها بعد
             ->orderBy('accepted_at', 'desc')
             ->first();
 
-        // If no completed request is found, return an error message
         if (!$lastRequest) {
             return response()->json(['message' => 'No completed request found for rating.'], 404);
         }
 
-        // Check if the request has already been rated
-        if ($lastRequest->is_rated) {
-            return response()->json(['message' => 'This request has already been rated.'], 400);
+        // تحقق إذا كان هذا الطلب قد تم تقييمه من قبل
+        $existingRating = Rating::where('blind_id', $blind->user_id)
+            ->where('request_id', $lastRequest->request_id)
+            ->first();
+
+        if ($existingRating) {
+            return response()->json(['message' => 'You have already rated this request.'], 400);
         }
 
-        // Store the rating in the database
+        // إنشاء التقييم الجديد
         Rating::create([
             'blind_id' => $blind->user_id,
             'volunteer_id' => $lastRequest->volunteer_id,
@@ -49,43 +53,47 @@ class RatingController extends Controller
             'rating' => $request->rating
         ]);
 
-        // Mark the request as rated
+        // تحديث حالة الطلب ليصبح "تم تقييمه"
         $lastRequest->is_rated = true;
         $lastRequest->save();
 
-        // Calculate the sum and count of all ratings for that volunteer
-        $volunteerRatings = Rating::where('volunteer_id', $lastRequest->volunteer_id)->get();
-        $count = $volunteerRatings->count();
-        $sum = $volunteerRatings->sum('rating');
+        // تحقق إذا كان المتطوع لديه شهادة من قبل
+        $existingCertificate = Certificate::where('volunteer_id', $lastRequest->volunteer_id)->first();
 
-        // Check if the volunteer qualifies for a certificate
-        if ($count >= 2 && $sum >= 7) {
-            // Define certificate type based on total points
-            $type = 'helper';
-            if ($sum >= 30) $type = 'supporter';
-            if ($sum >= 40) $type = 'champion';
-            if ($sum >= 50) $type = 'legend';
+        if (!$existingCertificate) {
+            // احسب عدد الطلبات المكتملة
+            $completedRequests = BlindRequest::where('volunteer_id', $lastRequest->volunteer_id)
+                ->where('status', 'accepted')
+                ->count();
 
-            // Generate a PDF certificate
-            $pdfFile = $this->generateCertificatePDF($lastRequest->volunteer_id, $type);
+            // اجمع التقييمات لهذا المتطوع
+            $ratings = Rating::where('volunteer_id', $lastRequest->volunteer_id)->get();
+            $sum = $ratings->sum('rating');
+            $count = $ratings->count();
 
-            // Store the certificate record in the database
-            Certificate::create([
-                'volunteer_id' => $lastRequest->volunteer_id,
-                'certificate_type' => $type,
-                'certificate_file' => $pdfFile
-            ]);
+            // تحقق من الشروط: على سبيل المثال، 2 طلبات مكتملة ومجموع التقييمات فوق 5
+            if ($completedRequests >= 2 && $sum >= 5) {
+                // إنشاء شهادة Helper
+                $pdfFile = $this->generateCertificatePDF($lastRequest->volunteer_id, 'helper');
 
-            // Send a notification to the volunteer
-            Notification::create([
-                'volunteer_id' => $lastRequest->volunteer_id,
-                'message' => "Congratulations! You have been awarded a $type certificate. Download it from your app."
-            ]);
+                Certificate::create([
+                    'volunteer_id' => $lastRequest->volunteer_id,
+                    'certificate_type' => 'helper',
+                    'certificate_file' => $pdfFile
+                ]);
+
+                // إرسال إشعار للمتطوع
+                Notification::create([
+                    'volunteer_id' => $lastRequest->volunteer_id,
+                    'message' => "تهانينا! لقد حصلت على شهادة Helper. يمكنك تحميلها من التطبيق."
+                ]);
+            }
         }
 
-        // Return success message
+        // إرجاع رسالة تأكيد
         return response()->json(['message' => 'Rating submitted successfully.']);
     }
+
 
     // Function to generate and store a certificate PDF
     private function generateCertificatePDF($volunteerId, $type)
@@ -109,4 +117,23 @@ class RatingController extends Controller
         return asset('storage/certificates/' . $fileName);
 
     }
+
+
+
+    public function downloadCertificate()
+{
+    $volunteer = Auth::user();
+
+    $certificate = Certificate::where('volunteer_id', $volunteer->user_id)->first();
+
+    if (!$certificate) {
+        return response()->json(['message' => 'لم تحصل على شهادة بعد.'], 404);
+    }
+
+    return response()->json([
+        'message' => 'رابط تحميل الشهادة:',
+        'certificate_url' => $certificate->certificate_file
+    ]);
+}
+
 }

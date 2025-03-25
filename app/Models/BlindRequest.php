@@ -39,4 +39,10 @@ class BlindRequest extends Model
     {
         return $this->hasOne(Rating::class, 'request_id', 'request_id');
     }
+
+    public function notifications()
+{
+    return $this->hasMany(Notification::class, 'request_id', 'request_id');
+}
+
 }

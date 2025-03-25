@@ -44,4 +44,12 @@ Route::middleware(['auth:sanctum', VolunteerMiddleware::class])->group(function 
 
     // Mark notification as read
     Route::post('/notifications/{id}/read', [RequestController::class, 'markAsRead']);
+
+    // المتطوع يحمل شهادته
+Route::get('/download_certificate', [RatingController::class, 'downloadCertificate']);
+
+
+// جلب جميع الطلبات المعلقة المرتبطة بإشعارات المتطوع
+Route::middleware('auth:sanctum')->get('/requests/pending_for_volunteer', [RequestController::class, 'getPendingRequestsForVolunteer']);
+
 });
