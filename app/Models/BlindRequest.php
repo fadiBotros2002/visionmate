@@ -10,7 +10,18 @@ class BlindRequest extends Model
     use HasFactory;
 
     protected $primaryKey = 'request_id';
-    protected $fillable = ['blind_id', 'volunteer_id', 'request_time', 'status', 'blind_location', 'accepted_at','is_rated' ];
+    protected $fillable = [
+        'blind_id',
+        'volunteer_id',
+        'request_time',
+        'status',
+        'blind_latitude',
+        'blind_longitude',
+        'blind_location',  // إضافة blind_location هنا
+        'accepted_at',
+        'is_rated'
+    ];
+
     protected $table = 'requests';
 
     public function blinds()

@@ -16,12 +16,14 @@ return new class extends Migration
             $table->string('username')->unique();
             $table->string('phone')->unique();
             $table->string('password');
-            $table->enum('role', ['blind', 'volunteer','admin'])->default('volunteer');
-            $table->text('location')->nullable();
+            $table->enum('role', ['blind', 'volunteer', 'admin'])->default('volunteer');
+            $table->double('latitude', 15, 8)->nullable();
+            $table->double('longitude', 15, 8)->nullable();
             $table->string('identity_image')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
+
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();

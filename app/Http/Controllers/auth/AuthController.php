@@ -13,12 +13,9 @@ use App\Models\User;
 class AuthController extends Controller
 {
 
-
-
     public function register(Request $request)
     {
         Log::info('Register function started');
-
 
         Log::info('Validating request data...');
         $validator = Validator::make($request->all(), [
@@ -26,7 +23,8 @@ class AuthController extends Controller
             'phone' => 'required|string|unique:users,phone|max:15',
             'password' => 'required|string|min:6',
             'role' => 'required|in:blind,volunteer,admin',
-            'location' => 'nullable|string',
+            'latitude' => 'required|numeric|between:-90,90',
+            'longitude' => 'required|numeric|between:-180,180',
             'identity_image' => 'nullable|file|mimes:jpeg,png,jpg|max:2048',
         ]);
 
@@ -40,14 +38,22 @@ class AuthController extends Controller
             Log::info('Uploading identity image...');
             $file = $request->file('identity_image');
             try {
-                $imagePath = $file->store('identity_images', 'public');
+                $imageName = time() . '_' . $file->getClientOriginalName();
+                $destinationPath = public_path('storage/identity_images');
+
+                if (!file_exists($destinationPath)) {
+                    mkdir($destinationPath, 0777, true);
+                }
+
+                $file->move($destinationPath, $imageName);
+                $imagePath = 'identity_images/' . $imageName;
                 Log::info('Image uploaded successfully', ['path' => $imagePath]);
+
             } catch (\Exception $e) {
                 Log::error('Image upload failed', ['exception' => $e->getMessage()]);
                 return response()->json(['message' => 'Failed to upload image'], 500);
             }
         }
-
 
         Log::info('Creating user...');
         try {
@@ -56,7 +62,8 @@ class AuthController extends Controller
                 'phone' => $request->phone,
                 'password' => Hash::make($request->password),
                 'role' => $request->role,
-                'location' => $request->location,
+                'latitude' => $request->latitude,
+                'longitude' => $request->longitude,
                 'identity_image' => $imagePath,
             ]);
 
@@ -66,6 +73,7 @@ class AuthController extends Controller
                 'message' => 'User registered successfully!',
                 'user' => $user,
             ], 201);
+
         } catch (\Exception $e) {
             Log::error('User creation failed', ['exception' => $e->getMessage()]);
             return response()->json(['message' => 'User registration failed'], 500);

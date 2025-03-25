@@ -15,12 +15,13 @@ return new class extends Migration
             $table->bigIncrements('notification_id');
             $table->unsignedBigInteger('volunteer_id');
             $table->text('message');
+            $table->enum('type', ['certificate', 'request'])->default('request');
             $table->boolean('is_read')->default(false);
             $table->timestamps();
 
             $table->foreign('volunteer_id')->references('user_id')->on('users')->onDelete('cascade');
-
         });
+
     }
 
     /**

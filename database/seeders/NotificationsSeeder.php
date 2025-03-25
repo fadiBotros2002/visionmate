@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -15,22 +14,25 @@ class NotificationsSeeder extends Seeder
     {
         DB::table('notifications')->insert([
             [
-                'volunteer_id' => 2, // volunteer_id
+                'volunteer_id' => 2,
                 'message' => 'There is a request in your area from a blind person. Can you help?',
+                'type' => 'request',
                 'is_read' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'volunteer_id' => 3, // volunteer_id
-                'message' => 'There is a request in your area from a blind person. Can you help?',
-                'is_read' => true,
+                'volunteer_id' => 3,
+                'message' => 'Congratulations! You have received a certificate for your volunteering work.',
+                'type' => 'certificate',
+                'is_read' => false,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'volunteer_id' => 2, // volunteer_id
+                'volunteer_id' => 2,
                 'message' => 'There is a request in your area from a blind person. Can you help?',
+                'type' => 'request',
                 'is_read' => true,
                 'created_at' => now(),
                 'updated_at' => now(),

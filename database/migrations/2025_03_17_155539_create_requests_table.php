@@ -17,7 +17,9 @@ return new class extends Migration
             $table->unsignedBigInteger('volunteer_id')->nullable();
             $table->timestamp('request_time')->useCurrent();
             $table->enum('status', ['pending', 'accepted'])->default('pending');
-            $table->text('blind_location')->nullable();
+            $table->double('blind_latitude', 15, 8)->nullable();   // double
+            $table->double('blind_longitude', 15, 8)->nullable();  // double
+            $table->string('blind_location')->nullable();  // string لتخزين الموقع النصي
             $table->timestamp('accepted_at')->nullable();
             $table->boolean('is_rated')->default(false);
             $table->timestamps();
@@ -25,6 +27,8 @@ return new class extends Migration
             $table->foreign('blind_id')->references('user_id')->on('users')->onDelete('cascade');
             $table->foreign('volunteer_id')->references('user_id')->on('users')->onDelete('set null');
         });
+
+
 
 
     }

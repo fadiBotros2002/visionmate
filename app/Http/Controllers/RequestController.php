@@ -17,40 +17,82 @@ class RequestController extends Controller
     {
         $blind = Auth::user();
 
+        $request->validate([
+            'latitude' => 'required|numeric|between:-90,90',
+            'longitude' => 'required|numeric|between:-180,180',
+        ]);
+
+        // تحويل الإحداثيات إلى عنوان نصي باستخدام Nominatim
+        $locationString = $this->reverseGeocode($request->latitude, $request->longitude);
+
         $blindRequest = BlindRequest::create([
             'blind_id' => $blind->user_id,
-            'blind_location' => $request->location,
+            'blind_latitude' => $request->latitude,
+            'blind_longitude' => $request->longitude,
+            'blind_location' => $locationString, // تخزين النص
             'status' => 'pending'
         ]);
 
-        $inputLocation = strtolower($request->location);
-
         $volunteers = User::where('role', 'volunteer')->get();
-
         $matchingVolunteers = [];
 
         foreach ($volunteers as $volunteer) {
-            $volunteerLocation = strtolower($volunteer->location);
-            $distance = levenshtein($inputLocation, $volunteerLocation);
+            $distance = $this->haversine(
+                $request->latitude, $request->longitude,
+                $volunteer->latitude, $volunteer->longitude
+            );
 
-
-            if ($distance <= 3) {
+            if ($distance <= 5) {
                 $matchingVolunteers[] = $volunteer;
-
 
                 Notification::create([
                     'volunteer_id' => $volunteer->user_id,
-                    'message' => 'There is a request in your area from a blind person. Can you help?'
+                    'message' => 'There is a request nearby from a blind person. Can you help?'
                 ]);
             }
         }
 
         return response()->json([
-            'message' => 'Request created, and flexible search found volunteers who have been notified.',
+            'message' => 'Request created, and nearby volunteers have been notified.',
             'request_id' => $blindRequest->request_id,
             'matched_volunteers' => count($matchingVolunteers)
         ]);
     }
+
+    // دالة تحويل الإحداثيات إلى نص باستخدام Nominatim (مجاني)
+    private function reverseGeocode($lat, $lon)
+    {
+        $url = "https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=$lat&lon=$lon";
+
+        $opts = [
+            "http" => [
+                "header" => "User-Agent: MyApp/1.0\r\n"
+            ]
+        ];
+        $context = stream_context_create($opts);
+
+        $response = file_get_contents($url, false, $context);
+        $data = json_decode($response);
+
+        return $data->display_name ?? "Unknown location";  // إرجاع الموقع النصي
+    }
+
+    // دالة حساب المسافة
+    private function haversine($lat1, $lon1, $lat2, $lon2)
+    {
+        $earthRadius = 6371; // km
+        $dLat = deg2rad($lat2 - $lat1);
+        $dLon = deg2rad($lon2 - $lon1);
+
+        $a = sin($dLat / 2) * sin($dLat / 2) +
+            cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
+            sin($dLon / 2) * sin($dLon / 2);
+
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+        return $earthRadius * $c; // المسافة بالكيلومترات
+    }
+
+
 
     public function acceptRequest($id)
     {
