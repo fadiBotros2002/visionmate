@@ -17,7 +17,7 @@ class BlindRequest extends Model
         'status',
         'blind_latitude',
         'blind_longitude',
-        'blind_location',  // إضافة blind_location هنا
+        'blind_location',
         'accepted_at',
         'is_rated'
     ];
@@ -43,6 +43,14 @@ class BlindRequest extends Model
     public function notifications()
 {
     return $this->hasMany(Notification::class, 'request_id', 'request_id');
+}
+
+public function getComputedStatusAttribute()
+{
+    if ($this->status === 'pending' && $this->created_at->diffInMinutes(now()) >= 10) {
+        return 'expired';
+    }
+    return $this->status;
 }
 
 }

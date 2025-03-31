@@ -11,7 +11,7 @@ class CertificateSeeder extends Seeder
     {
         DB::table('certificates')->insert([
             [
-                'volunteer_id' => 2,
+                'volunteer_id' => 3,
                 'certificate_type' => 'helper',
                 'awarded_at' => now(),
                 'created_at' => now(),

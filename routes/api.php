@@ -34,22 +34,20 @@ Route::middleware(['auth:sanctum', BlindMiddleware::class])->group(function () {
 Route::middleware(['auth:sanctum', VolunteerMiddleware::class])->group(function () {
 
     // Route for updating user info
-    Route::put('/update_info', [ProfileController::class, 'updateUserInfo']);
+    Route::get('/user_info', [ProfileController::class, 'viewProfile']);
 
-    // Volunteer accepts request
-    Route::post('/requests/{id}/accept', [RequestController::class, 'acceptRequest']);
+    // Route for updating user info
+    Route::put('/update_info', [ProfileController::class, 'updateUserInfo']);
 
     // Volunteer gets notifications
     Route::get('/notifications', [RequestController::class, 'notifications']);
 
-    // Mark notification as read
-    Route::post('/notifications/{id}/read', [RequestController::class, 'markAsRead']);
 
-    // المتطوع يحمل شهادته
+    // download certificate
 Route::get('/download_certificate', [RatingController::class, 'downloadCertificate']);
 
 
-// جلب جميع الطلبات المعلقة المرتبطة بإشعارات المتطوع
-Route::middleware('auth:sanctum')->get('/requests/pending_for_volunteer', [RequestController::class, 'getPendingRequestsForVolunteer']);
+// Volunteer handles notification click: marks as read & accepts request
+Route::post('/notifications/{notification_id}/handle', [RequestController::class, 'handleNotificationClick']);
 
 });
