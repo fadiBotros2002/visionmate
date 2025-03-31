@@ -8,6 +8,7 @@ use App\Http\Middleware\VolunteerMiddleware;
 use App\Http\Controllers\auth\ProfileController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\RatingController;
+use App\Http\Controllers\PaymentController;
 
 
 /*
@@ -51,3 +52,10 @@ Route::get('/download_certificate', [RatingController::class, 'downloadCertifica
 Route::post('/notifications/{notification_id}/handle', [RequestController::class, 'handleNotificationClick']);
 
 });
+
+
+//payment apis
+
+
+Route::post('/donate', [PaymentController::class, 'processDonation']);
+
