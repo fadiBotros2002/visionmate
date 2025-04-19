@@ -17,21 +17,21 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 */
+//Auth Apis
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
-
+//Blind Apis
 Route::middleware(['auth:sanctum', BlindMiddleware::class])->group(function () {
 
     // Blind user creates request
     Route::post('/request', [RequestController::class, 'store']);
     // Blind rate the volunteer
     Route::post('/rate_volunteer', [RatingController::class, 'rateVolunteer']);
-
 });
 
-
+//Volunteer Apis
 Route::middleware(['auth:sanctum', VolunteerMiddleware::class])->group(function () {
 
     // Route for updating user info
@@ -43,19 +43,13 @@ Route::middleware(['auth:sanctum', VolunteerMiddleware::class])->group(function 
     // Volunteer gets notifications
     Route::get('/notifications', [RequestController::class, 'notifications']);
 
+    // Volunteer handles notification click: marks as read & accepts request
+    Route::post('/notifications/{notification_id}/handle', [RequestController::class, 'handleNotificationClick']);
 
     // download certificate
-Route::get('/download_certificate', [RatingController::class, 'downloadCertificate']);
-
-
-// Volunteer handles notification click: marks as read & accepts request
-Route::post('/notifications/{notification_id}/handle', [RequestController::class, 'handleNotificationClick']);
+    //Route::get('/download_certificate', [RatingController::class, 'downloadCertificate']);
 
 });
 
-
-//payment apis
-
-
+//payment Apis
 Route::post('/donate', [PaymentController::class, 'processDonation']);
-

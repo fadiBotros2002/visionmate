@@ -6,14 +6,14 @@
         body {
             font-family: 'DejaVu Sans', sans-serif;
             text-align: center;
-            border: 8px solid #b22222;
+            border: 8px solid #0074D9; /* Updated border color to blue */
             padding: 50px;
             background: #f2f2f2;
             color: #333;
         }
         h1 {
             font-size: 48px;
-            color: #b22222;
+            color: #0074D9; /* Updated title color to blue */
             margin-bottom: 10px;
             font-weight: bold;
         }
@@ -47,7 +47,7 @@
         }
         .certificate-type {
             font-size: 24px;
-            color: #b22222;
+            color: #0074D9; /* Updated certificate type color to blue */
             margin-top: 30px;
             font-weight: bold;
         }
@@ -57,7 +57,7 @@
     <img src="{{ public_path('storage/logo.png') }}" class="logo" alt="logo">
     <h1>Certificate of Appreciation</h1>
     <h2>This certificate is proudly presented to:</h2>
-    <h2 style="color:#b22222;">{{ $volunteer->username }}</h2>
+    <h2 style="color:#0074D9;">{{ $volunteer->username }}</h2> <!-- Updated name color to blue -->
     <p>In recognition of your valuable contribution and dedication in supporting visually impaired individuals.</p>
     <p class="certificate-type">Certificate Level: <strong>{{ ucfirst($certificate_type) }}</strong></p>
     <div class="date">Issued on: {{ $date }}</div>

@@ -20,6 +20,8 @@ return new class extends Migration
             $table->double('latitude', 15, 8)->nullable();
             $table->double('longitude', 15, 8)->nullable();
             $table->string('identity_image')->nullable();
+            $table->string('email')->nullable();
+            $table->float('average_rating')->default(0);
             $table->rememberToken();
             $table->timestamps();
         });

@@ -20,6 +20,7 @@ return new class extends Migration
             $table->double('blind_latitude', 15, 8)->nullable();
             $table->double('blind_longitude', 15, 8)->nullable();
             $table->string('blind_location')->nullable();
+            $table->text('text_request')->nullable();
             $table->timestamp('accepted_at')->nullable();
             $table->boolean('is_rated')->default(false);
             $table->timestamps();

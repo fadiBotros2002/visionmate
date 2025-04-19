@@ -18,6 +18,7 @@ class BlindRequest extends Model
         'blind_latitude',
         'blind_longitude',
         'blind_location',
+        'text_request',
         'accepted_at',
         'is_rated'
     ];

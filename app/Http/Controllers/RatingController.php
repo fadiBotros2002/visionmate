@@ -58,6 +58,17 @@ class RatingController extends Controller
         $lastRequest->is_rated = true;
         $lastRequest->save();
 
+
+        // Update average rating
+        $ratings = Rating::where('volunteer_id', $lastRequest->volunteer_id)->get();
+        $sum = $ratings->sum('rating');
+        $count = $ratings->count();
+        $average = $count > 0 ? $sum / $count : 0;
+
+        User::where('user_id', $lastRequest->volunteer_id)->update([
+            'average_rating' => $average
+        ]);
+
         // Check if the volunteer already has a certificate
         $existingCertificate = Certificate::where('volunteer_id', $lastRequest->volunteer_id)->first();
 
@@ -87,6 +98,7 @@ class RatingController extends Controller
                 // Send a notification to the volunteer
                 Notification::create([
                     'volunteer_id' => $lastRequest->volunteer_id,
+                    'type' => 'certificate',
                     'message' => "Congratulations! You have earned the Helper certificate. You can download it from the app."
                 ]);
             }
@@ -122,6 +134,7 @@ class RatingController extends Controller
         $pdf->save($path . $fileName);
         return asset('storage/certificates/' . $fileName); // Return the file URL
     }
+    /*
     public function downloadCertificate()
     {
         // Get the currently authenticated volunteer
@@ -137,16 +150,14 @@ class RatingController extends Controller
 
         // Mark the related notification as read
         Notification::where('volunteer_id', $volunteer->user_id)
-                    ->where('type', 'certificate')
-                    ->where('is_read', false) // Only update if it's unread
-                    ->update(['is_read' => true]);
+            ->where('type', 'certificate')
+            ->where('is_read', false) // Only update if it's unread
+            ->update(['is_read' => true]);
 
         // Return the certificate download URL
         return response()->json([
             'message' => 'Certificate download link:',
             'certificate_url' => $certificate->certificate_file
         ]);
-    }
-
-
+    }*/
 }

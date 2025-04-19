@@ -79,14 +79,15 @@ class ProfileController extends Controller
         // Check if the user exists
         if ($user) {
             return response()->json([
-                'user_id' => $user->user_id, // Return user ID
-                'username' => $user->username, // Return username
-                'phone' => $user->phone, // Return phone number
-                'role' => $user->role, // Return role (e.g., blind, volunteer, admin)
-                'latitude' => $user->latitude, // Return latitude
-                'longitude' => $user->longitude, // Return longitude
-                'identity_image' => $user->identity_image, // Return path to identity image (if any)
-                'created_at' => $user->created_at, // Return account creation timestamp
+                'user_id' => $user->user_id,
+                'username' => $user->username,
+                'phone' => $user->phone,
+                'role' => $user->role,
+                'latitude' => $user->latitude,
+                'longitude' => $user->longitude,
+                'identity_image' => $user->identity_image,
+                'created_at' => $user->created_at,
+                'average_rating' => $user->average_rating,
             ]);
         }
 

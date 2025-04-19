@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-
+use Filament\Panel;
+use Filament\Models\Contracts\FilamentUser;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -27,6 +28,8 @@ class User extends Authenticatable
         'latitude',
         'longitude',
         'identity_image',
+        'email',
+        'average_rating'
     ];
 
     /**
@@ -80,5 +83,16 @@ class User extends Authenticatable
     public function certificates()
     {
         return $this->hasMany(Certificate::class, 'volunteer_id', 'user_id');
+    }
+
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return $this->role === 'admin';
+    }
+    public function getFilamentName(): string
+    {
+        // تأكد من إرجاع اسم أو بريد إلكتروني أو نص افتراضي دائمًا
+        return $this->username ?? $this->email ?? 'Unknown User';
     }
 }
