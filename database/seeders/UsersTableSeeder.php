@@ -8,9 +8,6 @@ use Illuminate\Support\Facades\Hash;
 
 class UsersTableSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         DB::table('users')->insert([
@@ -23,6 +20,7 @@ class UsersTableSeeder extends Seeder
                 'longitude' => 36.2765,
                 'identity_image' => 'fadib.png',
                 'email' => 'fadibotros99@gmail.com',
+                'average_rating' => 0,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -35,6 +33,7 @@ class UsersTableSeeder extends Seeder
                 'longitude' => 36.2765,
                 'identity_image' => 'fadi.png',
                 'email' => null,
+                'average_rating' => 4,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -47,6 +46,7 @@ class UsersTableSeeder extends Seeder
                 'longitude' => 36.2921,
                 'identity_image' => 'ahmad.png',
                 'email' => null,
+                'average_rating' => 3,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -59,6 +59,7 @@ class UsersTableSeeder extends Seeder
                 'longitude' => 36.2765,
                 'identity_image' => 'blind.png',
                 'email' => null,
+                'average_rating' => 0,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -71,6 +72,7 @@ class UsersTableSeeder extends Seeder
                 'longitude' => 36.3078,
                 'identity_image' => 'blind2.png',
                 'email' => null,
+                'average_rating' => 0,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -83,6 +85,7 @@ class UsersTableSeeder extends Seeder
                 'longitude' => 36.2921,
                 'identity_image' => 'blind3.png',
                 'email' => null,
+                'average_rating' => 0,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -95,6 +98,7 @@ class UsersTableSeeder extends Seeder
                 'longitude' => 36.2765,
                 'identity_image' => 'blind4.png',
                 'email' => null,
+                'average_rating' => 0,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -107,6 +111,7 @@ class UsersTableSeeder extends Seeder
                 'longitude' => 36.2765,
                 'identity_image' => 'blind5.png',
                 'email' => null,
+                'average_rating' => 0,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

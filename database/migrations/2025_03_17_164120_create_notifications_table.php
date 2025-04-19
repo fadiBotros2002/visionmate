@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('notifications', function (Blueprint $table) {
             $table->bigIncrements('notification_id');
-            $table->unsignedBigInteger('volunteer_id');
+            $table->unsignedBigInteger('volunteer_id')->nullable();
             $table->unsignedBigInteger('request_id')->nullable();
-            $table->text('message');
-            $table->enum('type', ['certificate', 'request'])->default('request');
+            $table->text('message')->nullable();
+            $table->enum('type', ['certificate', 'request','admin'])->default('request');
             $table->boolean('is_read')->default(false);
             $table->timestamps();
 
