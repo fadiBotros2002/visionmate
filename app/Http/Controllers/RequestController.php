@@ -14,18 +14,15 @@ class RequestController extends Controller
     /**
      * Function to allow a blind user to create a new help request and notify nearby volunteers.
      */
-    /**
-     * Function to allow a blind user to create a new help request and notify nearby volunteers.
-     */
     public function store(Request $request)
     {
-        $blind = Auth::user(); // Retrieve the currently authenticated blind user
+        $blind = Auth::user();
 
         // Validate incoming request
         $request->validate([
             'latitude' => 'required|numeric|between:-90,90',
             'longitude' => 'required|numeric|between:-180,180',
-            'text_request' => 'nullable|string|max:1000', // Validate text request if present
+            'text_request' => 'nullable|string|max:1000',
         ]);
 
         // Convert coordinates into a text-based address using reverse geocoding
@@ -38,7 +35,7 @@ class RequestController extends Controller
             'blind_longitude' => $request->longitude,
             'blind_location'  => $locationString,
             'status'          => 'pending',
-            'text_request'    => $request->input('text_request'), // Add the text request
+            'text_request'    => $request->input('text_request'),
             'created_at'      => now()
         ]);
 
@@ -121,14 +118,14 @@ class RequestController extends Controller
 */
     public function notifications()
     {
-        $volunteer = Auth::user(); // Retrieve the authenticated volunteer
+        $volunteer = Auth::user();
 
         // Fetch notifications with related request and blind user
         $notifications = Notification::with('blindRequest.blinds')
             ->where('is_read', 0)
             ->where(function ($query) use ($volunteer) {
                 $query->where('volunteer_id', $volunteer->user_id)
-                    ->orWhere('type', 'admin');
+                    ->orWhere('type', 'admin'); //if admin sent general not...
             })
             ->orderBy('created_at', 'desc')
             ->get();
@@ -167,11 +164,11 @@ class RequestController extends Controller
      */
     public function handleNotificationClick($notificationId)
     {
-        $volunteer = Auth::user(); // Retrieve the currently authenticated volunteer
+        $volunteer = Auth::user();
 
         // Find the unread notification by ID
         $notification = $volunteer->notifications()
-            ->where('notification_id', $notificationId) // Match notification ID
+            ->where('notification_id', $notificationId)
             ->first();
 
         if (!$notification) {
@@ -185,7 +182,7 @@ class RequestController extends Controller
 
         // Fetch the associated blind request
         $blindRequest = BlindRequest::where('request_id', $notification->request_id)
-            ->where('status', 'pending') // Ensure the request status is "pending"
+            ->where('status', 'pending')
             ->first();
 
         if (!$blindRequest) {
@@ -204,9 +201,9 @@ class RequestController extends Controller
 
         // Accept the request
         $blindRequest->update([
-            'volunteer_id' => $volunteer->user_id, // Associate the volunteer with the request
-            'status' => 'accepted', // Update the status to "accepted"
-            'accepted_at' => now(), // Record the acceptance timestamp
+            'volunteer_id' => $volunteer->user_id,
+            'status' => 'accepted',
+            'accepted_at' => now(),
         ]);
 
         $blind = $blindRequest->blinds; // Fetch blind user's information
@@ -214,8 +211,8 @@ class RequestController extends Controller
         // Return details of the accepted request
         return response()->json([
             'message' => 'Request accepted via notification.',
-            'blind_phone' => $blind->phone, // Blind user's phone number
-            'blind_location' => $blindRequest->blind_location // Blind user's location
+            'blind_phone' => $blind->phone,
+            'blind_location' => $blindRequest->blind_location
         ]);
     }
 }

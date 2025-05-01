@@ -21,13 +21,13 @@ class AuthController extends Controller
         // Validate the incoming request data
         Log::info('Validating request data...');
         $validator = Validator::make($request->all(), [
-            'username' => 'required|string|unique:users,username|max:255', // Username is required and must be unique
-            'phone' => 'required|string|unique:users,phone|max:15', // Phone number is required and must be unique
-            'password' => 'required|string|min:6', // Password is required and must have a minimum length
-            'role' => 'required|in:blind,volunteer,admin', // Role is required and must be one of the allowed values
-            'latitude' => 'required|numeric|between:-90,90', // Latitude is required and must be within the valid range
-            'longitude' => 'required|numeric|between:-180,180', // Longitude is required and must be within the valid range
-            'identity_image' => 'nullable|file|mimes:jpeg,png,jpg|max:2048', // Identity image is optional but must meet specified requirements
+            'username' => 'required|string|unique:users,username|max:255',
+            'phone' => 'required|string|unique:users,phone|max:15',
+            'password' => 'required|string|min:6',
+            'role' => 'required|in:blind,volunteer',
+            'latitude' => 'required|numeric|between:-90,90',
+            'longitude' => 'required|numeric|between:-180,180',
+            'identity_image' => 'nullable|file|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         // If validation fails
@@ -100,8 +100,8 @@ class AuthController extends Controller
 
             // Validate the input data
             $validateUser = Validator::make($request->all(), [
-                'phone_or_username' => 'required', // Phone or username is required
-                'password' => 'required', // Password is required
+                'phone_or_username' => 'required',
+                'password' => 'required',
             ]);
 
             if ($validateUser->fails()) {

@@ -6,52 +6,54 @@
         body {
             font-family: 'DejaVu Sans', sans-serif;
             text-align: center;
-            border: 8px solid #0074D9; /* Updated border color to blue */
-            padding: 50px;
+            border: 8px solid #0074D9;
+            padding: 30px;
             background: #f2f2f2;
             color: #333;
         }
         h1 {
-            font-size: 48px;
-            color: #0074D9; /* Updated title color to blue */
-            margin-bottom: 10px;
+            font-size: 42px;
+            color: #0074D9;
+            margin-bottom: 5px;
             font-weight: bold;
         }
         h2 {
-            font-size: 34px;
-            margin: 20px 0;
+            font-size: 30px;
+            margin: 15px 0;
             color: #444;
         }
         p {
-            font-size: 20px;
-            margin-bottom: 30px;
+            font-size: 18px;
+            margin-bottom: 20px;
             color: #666;
         }
         .signature {
-            margin-top: 60px;
+            margin-top: 25px;
             text-align: right;
-            padding-right: 100px;
-            font-size: 18px;
+            padding-right: 80px;
+            font-size: 16px;
             color: #444;
             font-style: italic;
         }
         .date {
-            margin-top: 40px;
-            font-size: 18px;
+            margin-top: 30px;
+            font-size: 16px;
             color: #555;
             font-weight: bold;
         }
         .logo {
-            width: 100px;
-            margin-bottom: 30px;
+            width: 230px;
+            display: block;
+            margin: 0 auto 10px auto;
         }
         .certificate-type {
-            font-size: 24px;
-            color: #0074D9; /* Updated certificate type color to blue */
-            margin-top: 30px;
+            font-size: 20px;
+            color: #0074D9;
+            margin-top: 20px;
             font-weight: bold;
         }
     </style>
+
 </head>
 <body>
     <img src="{{ public_path('storage/logo.png') }}" class="logo" alt="logo">
@@ -63,7 +65,7 @@
     <div class="date">Issued on: {{ $date }}</div>
     <div class="signature">
         _______________________<br>
-        Platform Team
+        Vision Mate Team
     </div>
 </body>
 </html>

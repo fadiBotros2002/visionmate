@@ -14,13 +14,13 @@ class ProfileController extends Controller
     // Function to update user information
     public function updateUserInfo(Request $request)
     {
-        $user = Auth::user(); // Get the currently authenticated user
+        $user = Auth::user();
         $input = $request->all(); // Get all input data from the request
 
         // Update username if provided
         if (isset($input['username'])) {
             $request->validate([
-                'username' => 'required|string|max:255|unique:users,username,' . $user->user_id . ',user_id', // Validate username to ensure uniqueness
+                'username' => 'required|string|max:255|unique:users,username,' . $user->user_id . ',user_id',
             ]);
             $user->username = $input['username'];
         }
@@ -28,7 +28,7 @@ class ProfileController extends Controller
         // Update phone number if provided
         if (isset($input['phone'])) {
             $request->validate([
-                'phone' => 'required|string|max:20|unique:users,phone,' . $user->user_id . ',user_id', // Validate phone to ensure uniqueness
+                'phone' => 'required|string|max:20|unique:users,phone,' . $user->user_id . ',user_id',
             ]);
             $user->phone = $input['phone'];
         }
@@ -36,7 +36,7 @@ class ProfileController extends Controller
         // Update latitude if provided
         if (isset($input['latitude'])) {
             $request->validate([
-                'latitude' => 'required|numeric|between:-90,90', // Validate latitude to be within valid range
+                'latitude' => 'required|numeric|between:-90,90',
             ]);
             $user->latitude = $input['latitude'];
         }
@@ -44,7 +44,7 @@ class ProfileController extends Controller
         // Update longitude if provided
         if (isset($input['longitude'])) {
             $request->validate([
-                'longitude' => 'required|numeric|between:-180,180', // Validate longitude to be within valid range
+                'longitude' => 'required|numeric|between:-180,180',
             ]);
             $user->longitude = $input['longitude'];
         }
@@ -52,8 +52,8 @@ class ProfileController extends Controller
         // Update password if new password is provided
         if (isset($input['new_password'])) {
             $request->validate([
-                'current_password' => 'required', // Current password is required for verification
-                'new_password' => 'required|min:8|confirmed', // New password must have a minimum length and be confirmed
+                'current_password' => 'required',
+                'new_password' => 'required|min:8|confirmed',
             ]);
 
             // Check if the current password matches the user's existing password
@@ -74,7 +74,7 @@ class ProfileController extends Controller
     // Function to view the profile of the authenticated user
     public function viewProfile()
     {
-        $user = Auth::user(); // Get the currently authenticated user
+        $user = Auth::user();
 
         // Check if the user exists
         if ($user) {

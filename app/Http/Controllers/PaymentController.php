@@ -10,17 +10,19 @@ class PaymentController extends Controller
 {
     public function processDonation(Request $request)
     {
+        // Set Stripe API key
         Stripe::setApiKey(config('services.stripe.secret'));
 
-
         try {
+            // Create a Stripe charge
             $charge = Charge::create([
-                "amount" => $request->amount * 100, // تحويل إلى سنتات
+                "amount" => $request->amount * 100, // Amount in cents
                 "currency" => "usd",
                 "source" => $request->stripeToken,
                 "description" => "Donation to VisionMate"
             ]);
 
+            // Return success response
             return response()->json([
                 'success' => true,
                 'message' => 'Thank you for your donation!',
@@ -28,6 +30,7 @@ class PaymentController extends Controller
             ], 200);
 
         } catch (\Exception $e) {
+            // Return error response
             return response()->json([
                 'success' => false,
                 'message' => 'Error: ' . $e->getMessage()

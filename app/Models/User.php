@@ -92,7 +92,7 @@ class User extends Authenticatable
     }
     public function getFilamentName(): string
     {
-        // تأكد من إرجاع اسم أو بريد إلكتروني أو نص افتراضي دائمًا
+
         return $this->username ?? $this->email ?? 'Unknown User';
     }
 }

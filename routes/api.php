@@ -53,3 +53,10 @@ Route::middleware(['auth:sanctum', VolunteerMiddleware::class])->group(function 
 
 //payment Apis
 Route::post('/donate', [PaymentController::class, 'processDonation']);
+
+
+
+//for testing connection with react
+Route::get('/test', function () {
+    return response()->json(['message' => 'API is working']);
+});

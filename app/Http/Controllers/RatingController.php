@@ -19,10 +19,10 @@ class RatingController extends Controller
     {
         // Validate the rating input
         $request->validate([
-            'rating' => 'required|integer|min:0|max:5' // Rating must be an integer between 0 and 5
+            'rating' => 'required|integer|min:0|max:5'
         ]);
 
-        // Retrieve the currently authenticated blind user
+
         $blind = Auth::user();
 
         // Find the latest request by this blind user that hasn't been rated yet
