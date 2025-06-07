@@ -26,7 +26,7 @@ class RequestCountChart extends ChartWidget
                 [
                     'label' => 'Requests Status',
                     'data' => [$acceptedCount, $expiredCount, $pendingCount],
-                    'backgroundColor' => ['#10B981', '#6366F1', '#F59E0B'],
+                    'backgroundColor' => ['#2563EB', '#475569', '#94A3B8'],
                 ],
             ],
             'labels' => ['Accepted', 'Expired', 'Pending'],

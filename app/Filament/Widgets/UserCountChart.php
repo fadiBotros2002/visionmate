@@ -20,7 +20,7 @@ class UserCountChart extends ChartWidget
                 [
                     'label' => 'User Roles',
                     'data' => [$volunteerCount, $blindCount],
-                    'backgroundColor' => ['#10B981', '#6366F1'], // ألوان مخصصة لكل فئة
+                    'backgroundColor' => ['#3B82F6', '#CBD5E1']
                 ],
             ],
             'labels' => ['Volunteer', 'Blind'],
@@ -29,6 +29,6 @@ class UserCountChart extends ChartWidget
 
     protected function getType(): string
     {
-        return 'pie'; // نوع الرسم البياني
+        return 'pie';
     }
 }
