@@ -77,7 +77,7 @@ class UserResource extends Resource
                 TextColumn::make('role'),
                 TextColumn::make('average_rating')->label('Avg. Rating')->numeric(),
 
-                // عرض صورة الهوية مع السماح بتنزيلها عبر رابط
+               
                 TextColumn::make('identity_image')
                     ->label('Identity Image')
                     ->formatStateUsing(function ($state) {

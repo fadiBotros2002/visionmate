@@ -122,9 +122,10 @@ class RequestController extends Controller
 
         // Fetch notifications with related request and blind user
         $notifications = Notification::with('blindRequest.blinds')
-            ->where('is_read', 0)
+
             ->where(function ($query) use ($volunteer) {
                 $query->where('volunteer_id', $volunteer->user_id)
+                    ->where('is_read', 0)
                     ->orWhere('type', 'admin'); //if admin sent general not...
             })
             ->orderBy('created_at', 'desc')

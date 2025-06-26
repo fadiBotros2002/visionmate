@@ -11,7 +11,7 @@ class UserCountChart extends ChartWidget
 
     protected function getData(): array
     {
-        // احصائيات الأدوار
+      
         $volunteerCount = User::where('role', 'volunteer')->count() ?: 0;
         $blindCount = User::where('role', 'blind')->count() ?: 0;
 

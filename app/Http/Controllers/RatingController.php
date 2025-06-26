@@ -84,7 +84,7 @@ class RatingController extends Controller
             $count = $ratings->count(); // Total number of ratings
 
             // Check criteria (e.g., at least 2 completed requests and a total rating of 5 or more)
-            if ($completedRequests >= 2 && $sum >= 5) {
+            if ($completedRequests >= 2 && $sum >= 5) { //should be edit , just for test
                 // Generate a Helper certificate for the volunteer
                 $pdfFile = $this->generateCertificatePDF($lastRequest->volunteer_id, 'helper');
 
